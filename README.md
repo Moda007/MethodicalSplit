@@ -144,8 +144,8 @@ Each experiment notebook goes throught the following steps:
 <br>
 <ul>
 	<li>Methodical Splitting experiments: Groups 1, 2, 3, 4, & 5</li>
-	<li>Special case experiments: Groups 6</li>
-	<li>Extreme case experiments: Groups 7</li>
+	<li>Special case experiments: Group 6</li>
+	<li>Extreme case experiments: Group 7</li>
 </ul>
 
 
