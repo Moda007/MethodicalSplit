@@ -99,7 +99,7 @@ In case of Shapes3d dataset, the loaded dataset is randomly split into train and
 Special scenario is simulated, where the test sub-dataset is held out before hand, then the splitting is applied on the other proportion, then the data from the median range is considered as training sub-dataset, and the concatenated data from quartile and extreme ranges is considered as validation sub-dataset.
 This scenario is simulated, to replicate the case when the model is trained on "clean" data (from median range), but it is tested on mixed data (held out sub-dataset).
 		  
-* Extreme experiment:
+* Extreme case experiment:
 Extreme scenario is introduced, where we may find feature biasing in a split, either training, validation or testing, for instance, outlier crowds in testing dataset.
 One scenario is considered, where the training data is data from the median range, the validation data is from quartile range, and testing is from extreme range. The model is trained on "clean" data, validated on data contains oddity, and tested on anomaly data.
 		  
@@ -141,6 +141,12 @@ Each experiment notebook goes throught the following steps:
 	
 ### Experiments Groups
 <br><img src="./images/exp_groups.png" width=500 align="center" title="Experiments Groups"/><br>
+<br>
+<ul>
+	<li>Methodical Splitting experiments: Groups 1, 2, 3, 4, & 5</li>
+	<li>Special case experiments: Group 6</li>
+	<li>Extreme case experiments: Group 7</li>
+</ul>
 
 
 		  
