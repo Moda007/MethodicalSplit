@@ -1,10 +1,10 @@
-# Methodical Splitting
+# Algorithmic Splitting
 An algorithmic method for splitting the dataset into training and validation sub-datasets, making sure that the dis-tribution for the dataset is maintained.
 
 ## Introduction
 Machine learning models usually perform well when trained on hand-split prepared datasets, but not in real-world datasets, where the preparation for the training, validation and testing sub-datasets requires extensive effort, thus, random splitting is chosen which compromises the fair representation of the features and categories within the dataset. An algorithmic method is proposed, for fairly splitting the dataset, in order to maintain unbiased features and categories representation. The algorithm splits each dataset into sub-datasets after reducing the dimension, in order to be clustered afterwards. Different datasets and multiple models are used for performance evaluation.
 
-## Methodical Splitting Algorithm	
+## Algorithmic Splitting Algorithm	
 In this research, an algorithmic method is proposed for fairly splitting the dataset into training and validation sub-datasets, making sure that the distribution for the dataset is maintained. Achieving this requires going through major steps.
 <ol>
   <li>Dimension reduction and high level clustering</li>
