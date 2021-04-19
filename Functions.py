@@ -8,7 +8,7 @@ import umap
 from sklearn.model_selection import train_test_split
 
 # All groups & experiments
-# Group:{Exp:[Avg, Sub-avg, Rare]}
+# Group:{Exp:[Median, quartile, Extreme]}
 
 all_exp = {
     0:{
@@ -40,18 +40,18 @@ all_exp = {
         15:[30, 35, 35]
     },
     6:{
-        16:[70, 20, 10, 'Average'],
-        17:[10, 20, 70, 'Rare'],
-        18:[10, 70, 20, 'Sub-Average'],
-        19:[20, 70, 10, 'Sub-Average']
+        16:[70, 20, 10, 'Median'],
+        17:[10, 20, 70, 'Extreme'],
+        18:[10, 70, 20, 'quartile'],
+        19:[20, 70, 10, 'quartile']
     },
     7:{
-        20:[63, 27, 10, 'Average', 'Sub-Average', 'Rare'],
-        21:[63, 10, 27, 'Average', 'Rare', 'Sub-avg'],
-        22:[10, 63, 27, 'Sub-Average', 'Rare', 'Average'],
-        23:[27, 63, 10, 'Sub-Average', 'Average', 'Rare'],
-        24:[27, 10, 63, 'Rare', 'Average', 'Sub-Average'],
-        25:[10, 27, 63, 'Rare', 'Sub-Average', 'Average']
+        20:[63, 27, 10, 'Median', 'quartile', 'Extreme'],
+        21:[63, 10, 27, 'Median', 'Extreme', 'quartile'],
+        22:[10, 63, 27, 'quartile', 'Extreme', 'Median'],
+        23:[27, 63, 10, 'quartile', 'Median', 'Extreme'],
+        24:[27, 10, 63, 'Extreme', 'Median', 'quartile'],
+        25:[10, 27, 63, 'Extreme', 'quartile', 'Median']
     }
 }
 
@@ -60,7 +60,7 @@ ds_dim = None
 # List of functions:::
 def printExps(groups):
     '''Listing all experiments'''
-    print('\t\t\tAvg\tSub-Avg\tRare')
+    print('\t\t\tMedian\tquartile\Extreme')
     print('--------------------------------------------')
     for group in groups:
         print(f'Group: {group}')
@@ -78,7 +78,7 @@ def expDetails(exps):
     '''Choosing group and experiment'''
     printExps(exps)
     train = None
-    avg, sub, rare = None, None, None
+    median, quartile, extreme = None, None, None
     stratify = None
     g_idx = input('Enter group No.\t')
     exp_idx = input('Enter exp No.\t')
@@ -102,7 +102,7 @@ def expDetails(exps):
         # strat, stratify = stratified()
         print('This is a Ground Truth Experiment')
         # print(f'The data split is {strat}')
-        return ds, model, g_idx, exp_idx, avg, sub, rare, stratify, train
+        return ds, model, g_idx, exp_idx, median, quartile, extreme, stratify, train
 
     [avg, sub, rare] = exps[int(g_idx)][int(exp_idx)][:3]
     if g_idx == '6':
@@ -133,10 +133,10 @@ def expDetails(exps):
     # strat, stratify = stratified()
 
     print(f'for Group {g_idx} Experiment {exp_idx} split as the following:')
-    print('Avg\tSub-Avg\tRare')
-    print(f'{avg}\t{sub}\t{rare}')
+    print('Median\tquartile\tExtreme')
+    print(f'{median}\t{quartile}\t{Extreme}')
     # print(f'the data spliting is {strat}')
-    return ds, model, g_idx, exp_idx, avg, sub, rare, stratify, train
+    return ds, model, g_idx, exp_idx, median, auartile, extreme, stratify, train
 
 def getDS(DS):
     '''Get DataSet number'''
@@ -174,12 +174,12 @@ def getModel(model):
 def getExtremeExp(idx):
     '''Get Group 7 experiment details'''
     switcher = {
-    20:['Average', 'Sub-Average', 'Rare'],
-    21:['Average', 'Rare', 'Sub-avg'],
-    22:['Sub-Average', 'Rare', 'Average'],
-    23:['Sub-Average', 'Average', 'Rare'],
-    24:['Rare', 'Average', 'Sub-Average'],
-    25:['Rare', 'Sub-Average', 'Average']
+    20:['Median', 'quartile', 'Extreme'],
+    21:['Median', 'Extreme', 'quartile'],
+    22:['quartile', 'Extreme', 'Median'],
+    23:['quartile', 'Median', 'Extreme'],
+    24:['Extreme', 'Median', 'quartile'],
+    25:['Extreme', 'quartile', 'Median']
     }
     error_msg = 'Please enter valid expirement index [20, 21, 22, 23, 24, 25]'
     return switcher.get(idx, error_msg)
@@ -305,9 +305,9 @@ def expRegions(avg, sub, rare, p_out = True):
     av = R2_h - R2_l
     R = [R1_h, R1_l, R2_h, R2_l]
     if p_out:
-        print(f'Average Region:\t{R[0]}-{R[1]}')
-        print(f'Sub-Avg Region:\t{R[2]}-{R[0]} & {R[3]}-{R[0]}')
-        print(f'Rare Region:\t{R[2]}-{1} & {0}-{R[3]}')
+        print(f'Median Region:\t{R[0]}-{R[1]}')
+        print(f'quartile Region:\t{R[2]}-{R[0]} & {R[3]}-{R[0]}')
+        print(f'Extreme Region:\t{R[2]}-{1} & {0}-{R[3]}')
     return R
 
 def splitData(n, avg, sub, rare, cluster_list, y_list, original_list, p_out = True):
@@ -333,7 +333,7 @@ def splitData(n, avg, sub, rare, cluster_list, y_list, original_list, p_out = Tr
         no_rows.append(cluster_i.shape[0]) #Cluster number of rows
         co1 += 1 #end of the loop, move to the next cluster, increase the counter by 1
 
-    # Cluster splitting > 3 divisions (Average (Region 1), Sub-Average (Region 2), Rare (Region 3))
+    # Cluster splitting > 3 divisions (Median (Region 1), quartile (Region 2), Extreme (Region 3))
     co2 = 0 # creat counter to be used inside the loop
 
     for cluster_q in cluster_list:
@@ -360,9 +360,9 @@ def splitData(n, avg, sub, rare, cluster_list, y_list, original_list, p_out = Tr
             print("\n************************************************************************************************************\n\n")
             print(f"\n>>>Cluster {co2} Splitted datasets:::<<<\n")
             print("\t\tData Size \tLabels Size")
-            print("Average \t", R_1[co2].size, "\t\t", R_1_labels[co2].size) if len(R_1[co2]) != 0 else print("Average \t","empty\t\t empty")
-            print("Sub-Average \t", R_2[co2].size, "\t\t", R_2_labels[co2].size) if len(R_2[co2]) != 0 else print("Sub-Average \t","empty\t\t empty")
-            print("Rare \t\t", R_3[co2].size, "\t\t", R_3_labels[co2].size) if len(R_3[co2]) != 0 else print("Rare \t\t","empty\t\t empty")
+            print("Median \t", R_1[co2].size, "\t\t", R_1_labels[co2].size) if len(R_1[co2]) != 0 else print("Median \t","empty\t\t empty")
+            print("quartile \t", R_2[co2].size, "\t\t", R_2_labels[co2].size) if len(R_2[co2]) != 0 else print("quartile \t","empty\t\t empty")
+            print("Extreme \t\t", R_3[co2].size, "\t\t", R_3_labels[co2].size) if len(R_3[co2]) != 0 else print("Extreme \t\t","empty\t\t empty")
 
         co2 += 1 #end of the loop, increase the counter by 1
 
@@ -373,9 +373,9 @@ def showSplit(R_1, R_2, R_3, cluster_no):
     #Plotting splitted datasets (cluster regions) histograms without KDE, with Borders
     print("\n************************************************************************************************************\n")
     print(f">>>Cluster {cluster_no} Splitted datasets:::<<<\n")
-    print("Average \t", R_1[cluster_no].size) if len(R_1[cluster_no]) != 0 else print("Average \t","empty")
-    print("Sub-Average \t", R_2[cluster_no].size) if len(R_2[cluster_no]) != 0 else print("Sub-Average \t","empty")
-    print("Rare \t\t", R_3[cluster_no].size) if len(R_3[cluster_no]) != 0 else print("Rare \t\t","empty")
+    print("Median \t", R_1[cluster_no].size) if len(R_1[cluster_no]) != 0 else print("Median \t","empty")
+    print("quartile \t", R_2[cluster_no].size) if len(R_2[cluster_no]) != 0 else print("quartile \t","empty")
+    print("Extreme \t\t", R_3[cluster_no].size) if len(R_3[cluster_no]) != 0 else print("Extreme \t\t","empty")
 
     plt.figure(figsize=(12,7))
 
@@ -538,28 +538,28 @@ def prepareDataExtreme(no_cluster, R_1_original, R_1_labels, R_2_original, R_2_l
 
     extreme_exp = getExtremeExp(exp_idx)
     train, valid = extreme_exp[0], extreme_exp[1]
-    if train == 'Average':
+    if train == 'Median':
         x_train, y_train = x_R01, y_R01
-        if valid == 'Sub-Average':
+        if valid == 'quartile':
             x_valid, y_valid = x_R02, y_R02
             x_test, y_test = x_R03, y_R03
-        elif valid == 'Rare':
+        elif valid == 'Extreme':
             x_valid, y_valid = x_R03, y_R03
             x_test, y_test = x_R02, y_R02
-    elif train == 'Sub-Average':
+    elif train == 'quartile':
         x_train, y_train = x_R02, y_R02
-        if valid == 'Average':
+        if valid == 'Median':
             x_valid, y_valid = x_R01, y_R01
             x_test, y_test = x_R03, y_R03
-        elif valid == 'Rare':
+        elif valid == 'Extreme':
             x_valid, y_valid = x_R03, y_R03
             x_test, y_test = x_R01, y_R01
-    elif train == 'Rare':
+    elif train == 'Extreme':
         x_train, y_train = x_R03, y_R03
-        if valid == 'Average':
+        if valid == 'Median':
             x_valid, y_valid = x_R01, y_R01
             x_test, y_test = x_R02, y_R02
-        elif valid == 'Sub-Average':
+        elif valid == 'quartile':
             x_valid, y_valid = x_R02, y_R02
             x_test, y_test = x_R01, y_R01
 
